@@ -355,15 +355,15 @@
             <scope>provided</scope>
         </dependency>
     <!-- Eclipse Milo Dependencies -->
-    <dependency>
-        <groupId>org.eclipse.milo</groupId>
-        <artifactId>sdk-client</artifactId>
-        <version>0.6.4</version> <!-- 최신 버전을 사용하세요 -->
-    </dependency>
-    <dependency>
-        <groupId>org.eclipse.milo</groupId>
-        <artifactId>stack-client</artifactId>
-        <version>0.6.8</version> <!-- 최신 버전을 사용하세요 -->
-    </dependency>    
+	    <dependency>
+	        <groupId>org.eclipse.milo</groupId>
+	        <artifactId>sdk-client</artifactId>
+	        <version>0.6.13</version> <!-- 최신 버전을 사용하세요 -->
+	    </dependency>
+	    <dependency>
+	        <groupId>org.eclipse.milo</groupId>
+	        <artifactId>stack-client</artifactId>
+	        <version>0.6.8</version> <!-- 최신 버전을 사용하세요 -->
+	    </dependency>    
   </dependencies>
 </project>
