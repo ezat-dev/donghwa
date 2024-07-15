@@ -1,5 +1,6 @@
 package com.ace.donghwa;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,12 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
+import org.eclipse.milo.opcua.stack.core.types.structured.RequestHeader;
+import org.eclipse.milo.opcua.stack.core.types.structured.WriteRequest;
+import org.eclipse.milo.opcua.stack.core.types.structured.WriteResponse;
 import org.eclipse.milo.opcua.stack.core.types.structured.WriteValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,38 +94,71 @@ public class HomeController {
 
     @RequestMapping(value = "/write", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, String> write(@RequestParam("nodeId") String nodeIdStr, @RequestParam("value") int valueStr) 
+    public Map<String, String> write(
+    		@RequestParam("nodeId") String nodeIdStr,@RequestParam("value") short valueStr,
+    		@RequestParam("nodeId2") String nodeIdStr2,@RequestParam("value2") String valueStr2,
+    		@RequestParam("nodeId3") String nodeIdStr3,@RequestParam("value3") boolean valueStr3
+    		) 
     		throws UaException, InterruptedException, ExecutionException {
 
     	System.out.println("nodeIdStr : "+nodeIdStr+"// valueStr : "+valueStr);
     	
         OpcUaClient client = OpcUaClient.create("opc.tcp://192.168.1.62:5660");
-        
-        System.out.println(" client.getAddressSpace() : "+client.getAddressSpace());
-        System.out.println(" client.getConfig() : "+client.getConfig());
-        System.out.println(" client.getNamespaceTable() : "+client.getNamespaceTable());
-        System.out.println(" client.getSubscriptionManager() : "+client.getSubscriptionManager());
+
         
         // 클라이언트 연결
         client.connect().get();
 
+        UShort namespaceIndex = Unsigned.ushort(2);
+        
         // 노드 ID 생성
-        NodeId nodeId = new NodeId(2, nodeIdStr);
+        NodeId nodeId = new NodeId(namespaceIndex, nodeIdStr);
 
-        // 값을 설정
-        CompletableFuture<DataValue> future = client.readValue(0, TimestampsToReturn.Both, nodeId);
-
-        System.out.println("future Value : "+future.get().getValue());
+        // 노드 ID 생성
+        NodeId nodeId_s = new NodeId(namespaceIndex, nodeIdStr2);
+        
+        // 노드 ID 생성
+        NodeId nodeId_b = new NodeId(namespaceIndex, nodeIdStr3);
         
         DataValue dataValue = new DataValue(new Variant(valueStr));
-        
-        System.out.println("쓰는 데이터 : "+dataValue.getValue());
-        
-        UaVariableNode variableNode = client.getAddressSpace().getVariableNode(nodeId);
+        DataValue dataValue_s = new DataValue(new Variant(valueStr2));
+        DataValue dataValue_b = new DataValue(new Variant(valueStr3));
 
-        // 값을 쓰기
-//        variableNode.writeValue(dataValue);
-        variableNode.setValue(dataValue);
+        System.out.println("쓰는 dataValue 타입 : "+dataValue.getValue().getValue().getClass());        
+        
+        // 노드에 값 쓰기
+        CompletableFuture<StatusCode> writeFuture = client.writeValue(nodeId, dataValue);
+        CompletableFuture<StatusCode> writeFuture_s = client.writeValue(nodeId_s, dataValue_s);
+        CompletableFuture<StatusCode> writeFuture_b = client.writeValue(nodeId_b, dataValue_b);
+        
+        
+        StatusCode statusCode = writeFuture.get();
+
+        // 값이 성공적으로 쓰여졌는지 확인
+        if (statusCode.isGood()) {
+            System.out.println("Value written successfully");
+        } else {
+            System.out.println("Failed to write value: " + statusCode);
+        }
+        
+        StatusCode statusCode_s = writeFuture_s.get();
+        
+        // 값이 성공적으로 쓰여졌는지 확인
+        if (statusCode_s.isGood()) {
+        	System.out.println("Value written successfully_s");
+        } else {
+        	System.out.println("Failed to write value_s: " + statusCode_s);
+        }
+        
+        StatusCode statusCode_b = writeFuture_b.get();
+        
+        // 값이 성공적으로 쓰여졌는지 확인
+        if (statusCode_b.isGood()) {
+        	System.out.println("Value written successfully_b");
+        } else {
+        	System.out.println("Failed to write value_b: " + statusCode_b);
+        }
+        
         
         // 클라이언트 연결 종료
         client.disconnect().get();

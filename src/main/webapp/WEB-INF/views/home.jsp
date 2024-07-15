@@ -15,12 +15,28 @@
 
     <h2>Write Value</h2>
     <form id="writeForm">
-        <label for="nodeId">Node ID:</label>
+        <label for="nodeId">Node ID(Word):</label>
         <input type="text" id="nodeId" name="nodeId" required>
         <br>
-        <label for="value">Value:</label>
+        <label for="value">Value(Word):</label>
         <input type="text" id="value" name="value" required>
         <br>
+        
+        <label for="nodeId">Node ID2(String):</label>
+        <input type="text" id="nodeId2" name="nodeId2" required>
+        <br>        
+        <label for="value">Value2(String):</label>
+        <input type="text" id="value2" name="value2" required>
+        <br>
+        
+        <label for="nodeId">Node ID3(Boolean):</label>
+        <input type="text" id="nodeId3" name="nodeId3" required>
+        <br>        
+        <label for="value">Value3(Boolean):</label>
+        <input type="text" id="value3" name="value3" required>
+        <br>
+        
+        
         <button type="button" onclick="writeValue()">Write Value</button>
     </form>
     
@@ -71,7 +87,11 @@
                 dataTyap:"json",
                 data: {
                     "nodeId": $("#nodeId").val(),
-                    "value": $("#value").val()
+                    "value": $("#value").val(),
+                    "nodeId2": $("#nodeId2").val(),
+                    "value2": $("#value2").val(),
+                    "nodeId3": $("#nodeId3").val(),
+                    "value3": $("#value3").val()                    
                 },
                 success: function(data) {
                     $("#writeResult").html(data.message);
