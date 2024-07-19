@@ -35,6 +35,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ace.domain.Recipe;
+import com.ace.util.RecipeMap;
+
 @Controller
 public class HomeController {
 
@@ -42,7 +45,7 @@ public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String home(Locale locale, Model model) {
-        return "home";
+        return "recipeTest";
     }
 
     @RequestMapping(value = "/opc", method = RequestMethod.GET)
@@ -169,6 +172,51 @@ public class HomeController {
         response.put("message", "Written value: " + valueStr + " to node: " + nodeIdStr);
 
         return response;
+    }
+    
+    @RequestMapping(value = "/write_test", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, String> write_test(Recipe recipe) 
+    				throws UaException, InterruptedException, ExecutionException {
+    	
+    	System.out.println(recipe.getProcess_step0());
+    	System.out.println(recipe.getTime_0());
+    	System.out.println(recipe.getTemperature_0());
+    	
+    	
+    	
+    	RecipeMap recipeMap = new RecipeMap();
+    	
+    	
+    	String node1 = recipeMap.rMapRtn("recipe.getProcess_step0()");
+    	System.out.println("node1 : "+node1);
+    	
+        OpcUaClient client = OpcUaClient.create("opc.tcp://192.168.1.63:5660");
+        // 클라이언트 연결
+        client.connect().get();
+
+        UShort namespaceIndex = Unsigned.ushort(2);
+        System.out.println("recipe.getProcess_step0() 값 : "+recipe.getProcess_step0());
+        
+        // 노드 ID 생성
+        NodeId nodeId = new NodeId(namespaceIndex, node1);
+        DataValue dataValue = new DataValue(new Variant(recipe.getProcess_step0()));
+        CompletableFuture<StatusCode> writeFuture = client.writeValue(nodeId, dataValue);
+        
+        StatusCode statusCode = writeFuture.get();
+
+        // 값이 성공적으로 쓰여졌는지 확인
+        if (statusCode.isGood()) {
+            System.out.println("Value written successfully");
+        } else {
+            System.out.println("Failed to write value: " + statusCode);
+        }        
+        
+    	// 응답 생성
+    	Map<String, String> response = new HashMap<>();
+    	response.put("status", "success");
+    	
+    	return response;
     }
 }
 

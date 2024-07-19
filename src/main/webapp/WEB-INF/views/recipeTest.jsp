@@ -15,25 +15,16 @@
 
     <h2>Write Value</h2>
     <form id="writeForm">
-        <label for="nodeId">Node ID(Word):</label>
-        <input type="text" id="nodeId" name="nodeId" required>
+        <label for="value">process_step0:</label>
+        <input type="text" id="process_step0" required>
         <br>
-        <label for="value">Value(Word):</label>
-        <input type="text" id="value" name="value" required>
+           
+        <label for="value">time_0:</label>
+        <input type="text" id="time_0" required>
         <br>
-        
-        <label for="nodeId">Node ID2(String):</label>
-        <input type="text" id="nodeId2" name="nodeId2" required>
-        <br>        
-        <label for="value">Value2(String):</label>
-        <input type="text" id="value2" name="value2" required>
-        <br>
-        
-        <label for="nodeId">Node ID3(Boolean):</label>
-        <input type="text" id="nodeId3" name="nodeId3" required>
-        <br>        
-        <label for="value">Value3(Boolean):</label>
-        <input type="text" id="value3" name="value3" required>
+              
+        <label for="value">temperature_0:</label>
+        <input type="text" id="temperature_0" required>
         <br>
         
         
