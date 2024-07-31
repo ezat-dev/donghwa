@@ -13,7 +13,8 @@
   height: 70px;
   display: table-cell;
   vertical-align: middle;
-  text-align:center;  
+  text-align:center;
+  cursor:pointer;
 }
 
 .parent {
@@ -482,13 +483,43 @@
     <script>
 	//전역변수
 	var monitoring1Interval;
+	var selectId;
+	var selectValue;
     
     //로드
 	$(function(){
 		monitoring1Interval = setInterval("getMonitoring1();",500);
 	});
 
+    //이벤트
+	$(".ex1").on("click",function(e){
+		console.log(e);
+		console.log(e.currentTarget.id);
+		selectId = (e.currentTarget.id).replace("_d","");
+		selectValue = $("#"+selectId).val();
 
+		console.log(selectId+"// "+selectValue);
+
+		setSelectTagValue();
+	});
+    
+    //함수
+    
+    //값쓰기
+    function setSelectTagValue(){
+        $.ajax({
+            url:"/donghwa/monitoring1/setValue",
+            type:"post",
+            dataType:"json",
+            data:{
+                "id":selectId,
+                "value":selectValue
+            },success:function(rtn){
+                console.log(rtn);
+			}
+		});
+	}
+    
 	function getMonitoring1(){
 		$.ajax({
 			url:"/donghwa/monitoring1/view",

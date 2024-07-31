@@ -152,6 +152,50 @@ public class HomeController {
     	return returnMap;    	
     }
     
+
+    @RequestMapping(value = "/monitoring1/setValue", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, String> monitoring1setValue(
+    		@RequestParam("id") String id,@RequestParam("value") boolean value
+    		) 
+    		throws UaException, InterruptedException, ExecutionException {
+
+        UShort namespaceIndex = Unsigned.ushort(2);
+
+        String writeId = "DONGHWA.PLC.M."+(id.toUpperCase());
+        boolean writeValue = false;
+        
+        if(value) {
+        	writeValue = false;
+        }else {
+        	writeValue = true;
+        }
+        
+        
+        // 노드 ID 생성
+        NodeId nodeId = new NodeId(namespaceIndex, writeId);
+        
+        DataValue dataValue = new DataValue(new Variant(writeValue));     
+        
+        // 노드에 값 쓰기
+        CompletableFuture<StatusCode> writeFuture = client.writeValue(nodeId, dataValue);
+        StatusCode statusCode = writeFuture.get();
+
+        // 값이 성공적으로 쓰여졌는지 확인
+        if (statusCode.isGood()) {
+            System.out.println("Value written successfully");
+        } else {
+            System.out.println("Failed to write value: " + statusCode);
+        }
+        
+        // 응답 생성
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
+
+        return response;
+    }
+    
+    
     @RequestMapping(value = "/opc", method = RequestMethod.GET)
     @ResponseBody
     public Map<String, Object> opc() throws UaException, InterruptedException, ExecutionException {
